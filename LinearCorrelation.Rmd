@@ -1,0 +1,76 @@
+---
+title: "R Notebook"
+output: html_notebook
+Author: Kajal Shah
+---
+```{r}
+baseball = read.csv("R Programming/baseball.csv")
+baseball
+```
+**Plot a diagram to show the relationship between 'runs' and 'at_bats'. Consider 'at_bats' as the explanatory variable.**
+```{r}
+plot(runs~at_bats, data = baseball)
+abline(lm(runs~at_bats, data = baseball))
+# ideally runs should increase with increase in at_bats, but the scatter plot doesnt depict that exactly that. 
+```
+**2 Can you quantify this relationship ?**
+** It shows co-relation of 61% **
+```{r}
+cor(baseball$runs,baseball$at_bats)
+```
+** 3 A more efficient way to find the min Sum of Squares is to use the lm function in R to fit the linear model (a.k.a. regression line).**
+
+**What is the linear function that describes the relationship (Hint: look at the coefficients in the summary)**
+
+**Answer: runs = 0.63*at_bats - 2789.24** 
+```{r}
+m1  <- lm (runs~at_bats,data= baseball)
+m1
+summary(m1)
+```
+** 4Fit another model that uses homeruns to predict runs. Using the estimates from the R output, write the equation of the regression line. What does the slope tell us in the context of the relationship between success of a team and its home runs?**
+
+** Answer: one unit increase (increase by 1 run) in homerun will increase runs by 1.83 times **
+
+```{r}
+plot(baseball$runs~ baseball$homeruns)
+abline(lm(baseball$runs~ baseball$homeruns))
+
+```
+```{r}
+summary(lm(baseball$runs~ baseball$homeruns))
+```
+
+**Create a scatter plot using the following commands**
+```{r}
+plot(baseball$runs~ baseball$at_bats )
+abline(m1)
+```
+**The abline can help you predict y at any value x. If the prediction is done for a value of x that is outside of the range of the dataset, what is the process is called ? What is the problem with it ?**
+
+**Answer: A prediction of that nature is called extrapolation and is not an ideal way of predicting values that are out of range. Such predictions may give wrong results and it shouldnt be done**
+
+** 5 If a team manager saw the least squares regression line and not the actual data, how many runs would he or she predict for a team with 5,579 at_bats? Is this an overestimate or an underestimate, and by how much? In other words, what is the residual for this prediction?**
+
+**Answer: -15.32**
+
+** 6 Choose another traditional variable from baseball daga that you think might be a good predictor of runs. Produce a scatterplot of the two variables and fit a linear model. At a glance, does there seem to be a linear relationship?**
+
+** bat_avg variable is the best fit, the graph looks more linear, dots are either on the line of close to the line **
+```{r}
+plot(baseball$runs~ baseball$bat_avg)
+abline(lm(baseball$runs~ baseball$bat_avg))
+```
+```{r}
+summary(lm(baseball$runs~ baseball$bat_avg))
+```
+
+
+** 7 How does this relationship compare to the relationship between runs and at_bats? Use the R2 values from the two model summaries to compare. Does your variable seem to predict runs better than at_bats? How can you tell?**
+
+**Answer: The Multiple R-squared value for at_bats is 0.37 or 37%, whereas for bat_avg, Multiple R-squared is 0.65 i.e. 65%. This shows bat_avg shows better corelation with runs**
+
+```{r}
+summary(lm(baseball$runs~ baseball$at_bats))
+```
+

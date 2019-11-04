@@ -1,0 +1,23 @@
+```{r}
+df = read.csv("R Programming/data_poverty.txt", sep = "\t")
+df
+```
+```{r}
+lm(Poverty~SingleFemaleHousehold, dat = df)
+```
+```{r}
+myModel = lm(Poverty~SingleFemaleHousehold, data = df)
+summary(myModel)
+#Multiple R -Squre: how many percent of values are correctly explained by the model
+```
+
+```{r}
+plot(Poverty~SingleFemaleHousehold, data = df)
+
+```
+
+```{r}
+plot(Poverty~SingleFemaleHousehold, data = df)
+abline(lm(Poverty~SingleFemaleHousehold, data = df))
+```
+

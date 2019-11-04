@@ -1,0 +1,64 @@
+```{r}
+df = read.csv("R Programming/data_poverty.txt", sep = "\t")
+df
+```
+
+```{r}
+# y = slope * x +intercept
+#increase in x value will cause 
+#e.g. poverty = 0.622* Graduates + 64.7
+#one percent increase graduate( or graduate == 1), will decrease the poverty by 0.622 percent
+
+plot(Poverty~Graduates, data = df)
+abline(lm(Poverty~Graduates, data = df))
+
+```
+```{r}
+myModel = lm(Poverty~Graduates, dat = df)
+summary(myModel)
+#Multiple R -Squre: how many percent of values are correctly explained by the model
+```
+```{r}
+lm(formula = Poverty~Graduates+ Metropolitan.Residence, data = df)
+```
+```{r}
+books = read.csv('R Programming/allbacks.csv', sep =",")
+books
+```
+
+```{r}
+plot(weight~volume, data = books)
+abline(lm(weight~volume, data = books))
+```
+```{r}
+lm(weight~volume, data = books)
+#weight = 0.79 volume +107.63
+#when volume = 0, weight = 107.63, doesnt make sense
+#voulme(cubic cm) increase, weight increases
+```
+```{r}
+#require(ggplot2)
+ggplot(books)+geom_point(aes(x= volume, y= weight, color = cover))+geom_smooth(aes(x= volume, y= weight, color = cover), method ='lm', fill =NA)
+```
+
+```{r}
+lm(weight~volume +cover, data = books)
+# weight = 0.71 volume -184.04 pb + 197
+#weight = 0.71 (100) -184.04 (1) + 197 = 94
+#Pb =1, Hb =0
+#184 effects the weight, when pb, reduces the weight, book 184 grms less then book is 184 less
+#pb is 184 times less than hb
+
+#if we had one more type, "ll"
+
+#Lets say there were 3 types of book covers, pb, hb and ll(leaf type), in that case, we would create one more coverhb variable like coverpb made below. first, as usual, wewould put 0 for hb & ll(non pb) and 1 for pb in the coverpb column. Similaraly, in the coverhb varaible we would put 1 for hb and 0 for non-hb varaible ie(pb & ll)
+#equation then would be weight = 0.718 volume - 184 coverpb - (or +) coverhb value
+
+```
+
+```{r}
+mymodel = lm(weight~volume +cover, data = books)
+summary(mymodel)
+#as vairiables increase, multiple r square increases, adjusted R square controls the added variables
+```
+

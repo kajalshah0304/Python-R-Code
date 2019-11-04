@@ -1,0 +1,126 @@
+---
+title: "R Notebook"
+output: html_notebook
+AUthor: Kajal Shah 
+---
+```{r}
+eval = read.csv("R Programming/evals.csv")
+eval
+```
+
+**Mean is less than the median, also there are fewer teachers graded low. the distribution is not normal. The data shows that the school has all mostly teachers, which could be true but not an ideal scenario**
+```{r}
+mean(eval$score)
+median(eval$score)
+table(eval$score)
+```
+
+
+```{r}
+barplot(table(eval$score))
+```
+```{r}
+boxplot(eval$bty_avg ~ eval$age)
+```
+** Both the plots show that there is no realtion between age and beauty rating. Ideally beauty rating shows decrease with increase in age. But the points over here are scattered in a way that shows no linear realtionship between the two variables**
+```{r}
+ggplot(data =eval)+geom_point(aes(x= age, y = bty_avg, color = gender))+geom_smooth(aes(x= age, y = bty_avg, color = gender),method ='lm', fill =NA) 
+```
+**data shows that generally the professors who are in tenure track category aged between 30 to 35, tenured professors have age more than 35, 45 to 60, looking at the box plot below bar plot**
+```{r}
+ggplot(data = eval)+geom_bar(aes(x= age, fill = factor(rank)))
+
+```
+```{r}
+plot(age~rank, data = eval)
+```
+
+
+
+```{r}
+plot ( eval$bty_avg  ~  eval$bty_f1lower )
+```
+
+```{r}
+cor ( eval$bty_avg ,  eval$bty_f1lower )
+```
+```{r}
+plot (eval[,  13 : 19 ])
+```
+```{r}
+m_bty_gen  <-  lm ( score  ~  bty_avg ,  data =  eval )
+summary ( m_bty_gen )
+```
+**3.Is bty_avg still a significant predictor of score? Has the addition of gender to the model changed the parameter estimate for bty_avg?**
+
+**Answer: addition of gender did change the multiple R-squared value to show better co-relation between bty_avg and age, but it is not significant enough or not the only factor, shown in the graph below**
+
+```{r}
+m_bty_gen  <-  lm ( score  ~  bty_avg  +  gender ,  data =  eval )
+summary ( m_bty_gen )
+```
+```{r}
+ggplot(data =eval)+geom_point(aes(x= age, y = bty_avg, color = gender))+geom_smooth(aes(x= age, y = bty_avg, color = gender),method ='lm', fill =NA) 
+```
+**4 What is the equation of the line corresponding to males? (Hint: For males, the parameter estimate is multiplied by 1.) For two professors who received the same beauty rating, which gender tends to have the higher course evaluation score?**
+
+** Answer: score = 0.074 bty_avg + 0.17 gendermale  + 3.74**
+
+```{r}
+lm(score~bty_avg+gender, data = eval)
+```
+**5 Create a new model called m_bty_rank with gender removed and rank added in. How does R appear to handle categorical variables that have more than two levels? Note that the rank variable has three levels: teaching, tenure track, tenured.**
+
+**Answer: it created two variables "ranktenure track" & "ranktenured"**
+
+```{r}
+m_bty_rank = lm(score~bty_avg+rank, data = eval)
+summary(m_bty_rank)
+```
+** 6 The interpretation of the coefficients in multiple regression is slightly different from that of simple regression. The estimate for bty_avg reflects how much higher a group of professors is expected to score if they have a beauty rating that is one point higher w hile holding all other variables constant. In this case, that translates into considering only professors of the same rank with bty_avg scores that are one point apart.**
+```{r}
+plot(bty_avg~rank, data = eval)
+
+```
+** 7 Which variable would you expect to have the highest p-value in this model? Why? Hint: Think about which variable would you expect to not have any association with the professor score.**
+
+**Answer: cls_profs variable has least association with the professor score**
+```{r}
+m_full  <- lm ( score  ~  rank  +  ethnicity  +
+gender  +  language  +  age  +  cls_perc_eval + cls_students  +  cls_level  +  cls_profs  + cls_credits  +  bty_avg +  pic_outfit  +  pic_color ,  data =  eval )
+summary ( m_full )
+```
+** 8 Check your suspicions from the previous exercise. Include the model output in your response.**
+
+**Answer: as we can see the variable cls_profs does not affect the score in any way**
+```{r}
+plot(score~cls_profs, data = eval)
+```
+
+**9 Interpret the coefficient associated with the ethnicity variable.**
+** Answer: The ethinicity pr value is 0.11698, it has no significance with other variables**
+
+** 10 Drop the variable with the highest p-value and refit the model. Did the coefficients and significance of the other explanatory variables change? (One of the things that makes multiple regression interesting is that coefficient estimates depend on the other variables that are included in the model.) If not, what does this say about whether or not the dropped variable was collinear with the other explanatory variables?**
+
+**Answer: Yes. There is small change in the coefficients and are better for evaluating**
+
+```{r}
+refit <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval + cls_students + cls_level + cls_credits + bty_avg + pic_outfit + pic_color,data = eval)
+summary(refit)
+```
+
+
+**11 Using backward-selection and p-value as the selection criterion, determine the best model. You do not need to show all steps in your answer, just the output for the final model. Also, write out the linear model for predicting score based on the final model you settle on.**
+
+**Answer: score = 0.16 ethnicitynot minority + 0.20 gendermale - 0.20 languagenon-english - 0.01 age + 0.0 cls_perc_eval + 0.5 cls_creditsone credit + 0.05 bty_avg - 0.19 pic_colorcolor + 3.77) **
+
+```{r}
+backward <- lm(score ~ ethnicity + gender + language + age + cls_perc_eval + cls_credits + bty_avg + pic_color, data = eval)
+summary(backward)
+```
+
+
+**12 Verify that the conditions for this model are reasonable using diagnostic plots.**
+```{r}
+plot(backward$residuals)
+```
